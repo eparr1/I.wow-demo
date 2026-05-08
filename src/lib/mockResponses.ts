@@ -25,10 +25,16 @@ export const mockResponses = {
   // Mid branch ---------------------------------------------------------------
 
   explore_variability: [
-    "It's useful to notice what shifts things, even a little — those patterns matter. Are there times, even briefly, when it feels a bit more manageable?",
-    "Thank you — knowing what tends to help is more powerful than it might seem. Are there times when it does feel a bit more manageable?",
-    "That makes sense — those variations are worth paying attention to. Are there times, even just occasionally, when it feels a bit more manageable?",
-  ],
+  "It sounds like things haven\'t I\'m been easy sometimes. At the same time, experiences like this can sometimes shift from day to day — have there been moments where work has felt even slightly more manageable?",
+
+  "Thank you for sharing that. Sometimes when people describe things as feeling up and down, there can still be certain moments or situations that feel a bit lighter. Have you noticed any of those recently?",
+
+  "That sounds genuinely draining at times. I\'m also wondering whether there are situations, people, or parts of the day where things tend to feel slightly easier?",
+
+  "It sounds like there\'s been a real level of pressure there. Even within difficult periods though, are there moments where things feel a little steadier or less intense?",
+
+  "Thanks for reflecting on that. Since it sounds like things may fluctuate a bit, have you noticed any times where the emotional pressure feels less strong?"
+],
 
   exceptions_mid: [
     "It sounds like there are moments you can draw on — those count for more than you might think. What do you think might move it just one point lower on that scale, not jumping to fine, just one small step?",

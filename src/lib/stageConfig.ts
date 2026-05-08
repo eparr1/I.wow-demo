@@ -19,7 +19,7 @@ export const BRANCH_OPENING: Record<Branch, { validation: string; question: stri
   },
   mid: {
     validation: "Sounds like it's been up and down — a score in the middle often means it varies depending on the week.",
-    question: "What tends to make it feel better?",
+    question: " What has felt the most difficult about that?",
   },
   high: {
     validation: "Thank you for sharing that with me — a score like that tells me things have been quite a stretch lately.",

@@ -32,7 +32,7 @@ export default function App() {
     setChatOpen(true);
     setTimeout(() => {
       addBotMessage(
-        "Hi — I'll guide you through a short check-in based on how things have been over the past few months. We'll focus on one area today and look at what's been working, even a little."
+        "Hi — it's lovely to meet you today at the Academic Collaboration Showcase! This short demo is a space to pause and reflect on how things have been feeling in your work recently, using one question from our I.ROC framework. I'll guide you through a brief check-in and we'll take a moment to explore how things have been for you over the past few months."
       );
     }, 550);
   };
@@ -98,7 +98,7 @@ export default function App() {
     const nextStage = branchStages[currentIndex + 1];
 
     const botText = await getBotResponse(stage, userText);
-    await addBotMessage(botText);
+    if (botText) await addBotMessage(botText);
 
     if (nextStage === 'summary') {
       await addBotMessage(buildSummary(branch, updatedResponses));
