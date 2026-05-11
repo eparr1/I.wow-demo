@@ -8,7 +8,7 @@ export default function MessageBubble({ message }: Props) {
   if (message.role === 'bot') {
     return (
       <div className="flex justify-start">
-        <div className="bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[75%] text-sm leading-relaxed whitespace-pre-wrap">
+        <div className="bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[88%] text-sm leading-relaxed whitespace-pre-wrap">
           {message.content}
         </div>
       </div>

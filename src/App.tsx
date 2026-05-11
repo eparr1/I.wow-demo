@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Stage, Branch } from './types';
 import { STAGE_PROGRESS, BRANCH_STAGES, BRANCH_OPENING, getBranch } from './lib/stageConfig';
-import { getBotResponse } from './lib/getBotResponse';
+import { getBotResponse, getClosingReflection, getSummaryTransition } from './lib/getBotResponse';
 import ProgressBar from './components/ProgressBar';
 import ChatWindow from './components/ChatWindow';
 import InputBar from './components/InputBar';
@@ -16,6 +16,21 @@ export default function App() {
   const [isTyping, setIsTyping] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [stageResponses, setStageResponses] = useState<Partial<Record<Stage, string>>>({});
+  const [pendingClose, setPendingClose] = useState(false);
+  const [awaitingSummaryConfirm, setAwaitingSummaryConfirm] = useState(false);
+
+  const SUMMARY_INVITE =
+    "We're nearly at the end of this check-in now — would you like to see a short summary of what we discussed today?";
+
+  function isReadyForSummary(text: string): boolean {
+    const lower = text.toLowerCase().trim();
+    const YES_SIGNALS = [
+      'yes', 'yeah', 'yep', 'yup', 'sure', 'ok', 'okay', 'please',
+      'go ahead', 'go on', 'ready', 'sounds good', "let's go", "let's see",
+      'show me', 'show', 'love to', 'would love',
+    ];
+    return YES_SIGNALS.some((s) => lower.includes(s));
+  }
 
   const addBotMessage = async (content: string): Promise<void> => {
     setIsTyping(true);
@@ -39,7 +54,8 @@ export default function App() {
 
   const handleBegin = async () => {
     setStage('scale_question');
-    await addBotMessage("Thinking about the past 3 months… have you felt overwhelmed or emotionally drained by your work?");
+    await addBotMessage("Thinking about the past 3 months, how often has work left you feeling overwhelmed, emotionally drained, or running low on energy?");
+    await addBotMessage("There's no right answer here — just choose the number that feels closest.");
     await addBotMessage("On a scale from 1 to 6 — where 1 is 'never' and 6 is 'all of the time' — tap the number that feels closest.");
   };
 
@@ -56,31 +72,30 @@ export default function App() {
   };
 
   function buildSummary(b: Branch, responses: Partial<Record<Stage, string>>): string {
-    const clip = (s: string | undefined) =>
-      s ? (s.length > 120 ? s.slice(0, 117) + '…' : s) : '—';
+    const val = (s: string | undefined) => s ?? '—';
 
     if (b === 'low') {
       return (
         `Here's what I heard from you today:\n\n` +
-        `• What's been helping: ${clip(responses.explore_helping)}\n\n` +
-        `• What supports that: ${clip(responses.strengths_amplify)}\n\n` +
-        `• Going forward: ${clip(responses.future_maintenance)}`
+        `• What's been helping: ${val(responses.explore_helping)}\n\n` +
+        `• What supports that: ${val(responses.strengths_amplify)}\n\n` +
+        `• Going forward: ${val(responses.future_maintenance)}`
       );
     }
     if (b === 'mid') {
       return (
         `Here's what I heard from you today:\n\n` +
-        `• What tends to make it better: ${clip(responses.explore_variability)}\n\n` +
-        `• When it feels more manageable: ${clip(responses.exceptions_mid)}\n\n` +
-        `• A small shift to try: ${clip(responses.small_shifts)}`
+        `• What tends to make it better: ${val(responses.explore_variability)}\n\n` +
+        `• When it feels more manageable: ${val(responses.exceptions_mid)}\n\n` +
+        `• A small shift to try: ${val(responses.small_shifts)}`
       );
     }
     return (
       `Here's what I heard from you today:\n\n` +
-      `• Support at work: ${clip(responses.safety_check)}\n\n` +
-      `• A time things felt more manageable: ${clip(responses.exceptions_high)}\n\n` +
-      `• What made that different: ${clip(responses.strengths_high)}\n\n` +
-      `• One small step: ${clip(responses.next_steps_high)}`
+      `• Support at work: ${val(responses.safety_check)}\n\n` +
+      `• A time things felt more manageable: ${val(responses.exceptions_high)}\n\n` +
+      `• What made that different: ${val(responses.strengths_high)}\n\n` +
+      `• One small step: ${val(responses.next_steps_high)}`
     );
   }
 
@@ -90,6 +105,31 @@ export default function App() {
     addUserMessage(userText);
     setInputValue('');
 
+    // User is responding after the summary invite — check if they're ready
+    if (awaitingSummaryConfirm) {
+      if (isReadyForSummary(userText)) {
+        setAwaitingSummaryConfirm(false);
+        await addBotMessage(buildSummary(branch, stageResponses));
+        await addBotMessage("Thank you for taking the time to share this with me today. What you've reflected on here is genuinely valuable — and the awareness you've brought to it is a real strength.");
+        setStage('summary');
+      } else {
+        // They said something extra — acknowledge briefly, then stay at the gate
+        const bridge = await getSummaryTransition(userText, messages);
+        if (bridge) await addBotMessage(bridge);
+      }
+      return;
+    }
+
+    // User replied to an unexpected question the bot asked at a closing stage
+    if (pendingClose) {
+      setPendingClose(false);
+      const reflection = await getClosingReflection(userText, messages);
+      if (reflection) await addBotMessage(reflection);
+      setAwaitingSummaryConfirm(true);
+      await addBotMessage(SUMMARY_INVITE);
+      return;
+    }
+
     const updatedResponses = { ...stageResponses, [stage]: userText };
     setStageResponses(updatedResponses);
 
@@ -97,15 +137,20 @@ export default function App() {
     const currentIndex = branchStages.indexOf(stage);
     const nextStage = branchStages[currentIndex + 1];
 
-    const botText = await getBotResponse(stage, userText);
+    const botText = await getBotResponse(stage, userText, messages);
     if (botText) await addBotMessage(botText);
 
     if (nextStage === 'summary') {
-      await addBotMessage(buildSummary(branch, updatedResponses));
-      await addBotMessage("Thank you for taking the time to share this with me today. What you've reflected on here is genuinely valuable — and the awareness you've brought to it is a real strength.");
+      if (botText?.includes('?')) {
+        // Bot asked a question — let the user answer before offering the summary
+        setPendingClose(true);
+      } else {
+        setAwaitingSummaryConfirm(true);
+        await addBotMessage(SUMMARY_INVITE);
+      }
+    } else if (nextStage) {
+      setStage(nextStage);
     }
-
-    if (nextStage) setStage(nextStage);
   };
 
   const handleReset = () => {
@@ -117,6 +162,8 @@ export default function App() {
     setIsTyping(false);
     setInputValue('');
     setStageResponses({});
+    setPendingClose(false);
+    setAwaitingSummaryConfirm(false);
   };
 
   void score;

@@ -25,7 +25,7 @@ export const mockResponses = {
   // Mid branch ---------------------------------------------------------------
 
   explore_variability: [
-  "It sounds like things haven\'t I\'m been easy sometimes. At the same time, experiences like this can sometimes shift from day to day — have there been moments where work has felt even slightly more manageable?",
+  "It sounds like things haven't been easy sometimes. At the same time, experiences like this can shift from day to day — have there been moments where work has felt even slightly more manageable?",
 
   "Thank you for sharing that. Sometimes when people describe things as feeling up and down, there can still be certain moments or situations that feel a bit lighter. Have you noticed any of those recently?",
 

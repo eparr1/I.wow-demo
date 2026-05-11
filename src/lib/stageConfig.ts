@@ -18,12 +18,12 @@ export const BRANCH_OPENING: Record<Branch, { validation: string; question: stri
     question: "What do you think has been helping keep things feeling steady?",
   },
   mid: {
-    validation: "Sounds like it's been up and down — a score in the middle often means it varies depending on the week.",
-    question: " What has felt the most difficult about that?",
+    validation: "That sounds like it's been quite up and down — manageable at some points, but heavier at others.",
+    question: "What has felt most difficult about that recently?",
   },
   high: {
     validation: "Thank you for sharing that with me — a score like that tells me things have been quite a stretch lately.",
-    question: "When you're running this close to empty, it's worth asking — do you feel like you have any support around you at work right now? A manager, a colleague, or someone in HR you could talk to?",
+    question: "When things have been feeling this stretched, it can help to check what support is around you. Do you feel like there's anyone at work you could talk to — a manager, colleague, HR, occupational health, or EAP?",
   },
 };
 
