@@ -1,4 +1,4 @@
-import type { Stage, Message } from '../types';
+import type { Branch, Stage, Message } from '../types';
 import { mockResponses } from './mockResponses';
 
 const USE_AI = true;
@@ -30,7 +30,7 @@ You speak like a thoughtful colleague, not a therapist or chatbot. You're curiou
 
 How you respond:
 - Pick up on something real the person said — a specific word, feeling, or detail. Never respond generically.
-- Give yourself 2–3 sentences to genuinely engage with what they shared before moving to the next question. Let the response feel like you actually heard them.
+- Give yourself 2 to 3 sentences to genuinely engage with what they shared before moving to the next question. Let the response feel like you actually heard them.
 - Your question should feel like it emerged from what they said, not like the next item on a list.
 - Keep it conversational and grounded. No bullet points, no clinical phrasing, no repeating phrases from earlier in the conversation.
 - If the person's reply is very short or vague, stay with what they gave you — acknowledge it warmly and gently invite them to say a bit more.
@@ -130,6 +130,136 @@ ${instruction}`;
   ];
 }
 
+export async function getCoachClose(
+  branch: Branch,
+  responses: Partial<Record<Stage, string>>,
+  history: Message[] = []
+): Promise<string> {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string | undefined;
+  const summaryLines = Object.entries(responses)
+    .map(([stage, answer]) => `• ${stage}: ${answer}`)
+    .join('\n');
+
+  if (!apiKey) return fallbackCoachClose(branch);
+
+  const systemContent = `${SYSTEM_PROMPT}
+
+You are I.WOW, a thoughtful workplace wellbeing coach. Using the person's responses, write one brief coaching close:
+- Reflect what matters most from their check-in.
+- Offer a small next step or shift in perspective.
+- Keep it warm, short, and no more than three sentences.
+- Do not ask any questions.`;
+
+  const historyMessages: OpenAIMessage[] = history.map((m) => ({
+    role: m.role === 'bot' ? 'assistant' : 'user',
+    content: m.content,
+  }));
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4.1-mini',
+        max_tokens: 140,
+        messages: [
+          { role: 'system', content: systemContent },
+          ...historyMessages,
+          {
+            role: 'user',
+            content: `Branch: ${branch}\nResponses:\n${summaryLines}`,
+          },
+        ],
+      }),
+    });
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? fallbackCoachClose(branch);
+  } catch {
+    return fallbackCoachClose(branch);
+  }
+}
+
+function fallbackCoachClose(branch: Branch): string {
+  if (branch === 'low') {
+    return 'It sounds like you already have a few steady supports in place. Keep those visible, and try one small choice this week that helps protect that balance.';
+  }
+  if (branch === 'mid') {
+    return 'You can see that things are uneven, but there are also times when it feels a bit more manageable. One small step would be to notice and lean into the simplest change that makes a day feel just a little easier.';
+  }
+  return 'You’ve noticed both the strain and the small moments that feel better. A good next step is to choose one tiny action this week that builds a bit more of that easier feeling into your routine.';
+}
+export async function getObservationsAndSteps(
+  branch: Branch,
+  responses: Partial<Record<Stage, string>>,
+  history: Message[] = []
+): Promise<string> {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string | undefined;
+  const summaryLines = Object.entries(responses)
+    .map(([stage, answer]) => `• ${stage}: ${answer}`)
+    .join('\n');
+
+  if (!apiKey) return fallbackObservationsAndSteps(branch);
+
+  const systemContent = `${SYSTEM_PROMPT}
+
+Based on what the person has shared in this check-in, write brief observations and a suggested next step:
+- Reflect the key themes or patterns you notice.
+- Suggest one small, realistic action they could take.- Use bullet points for clarity and readability- Keep it warm, grounded, and no more than 4 sentences.
+- Do not ask any questions.`;
+
+  const historyMessages: OpenAIMessage[] = history.map((m) => ({
+    role: m.role === 'bot' ? 'assistant' : 'user',
+    content: m.content,
+  }));
+
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4.1-mini',
+        max_tokens: 180,
+        messages: [
+          { role: 'system', content: systemContent },
+          ...historyMessages,
+          {
+            role: 'user',
+            content: `Branch: ${branch}\nResponses:\n${summaryLines}`,
+          },
+        ],
+      }),
+    });
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content ?? fallbackObservationsAndSteps(branch);
+  } catch {
+    return fallbackObservationsAndSteps(branch);
+  }
+}
+
+function fallbackObservationsAndSteps(branch: Branch): string {
+  if (branch === 'low') {
+    return 'What stands out:\n' +
+           '• You already have meaningful supports in place\n' +
+           '• Noticing and protecting those in the weeks ahead could help you stay grounded\n\n' +
+           'One small step: pick one thing that helps most, and make one small choice this week that keeps it visible.';
+  }
+  if (branch === 'mid') {
+    return 'What stands out:\n' +
+           '• Things do shift for you — there are times when it feels more manageable\n' +
+           '• That tells you something real about what helps\n\n' +
+           'One small step: when things feel even slightly easier this week, pause and notice what was different.';
+  }
+  return 'What stands out:\n' +
+         '• There\'s a gap between the strain you\'re carrying and the small moments that feel better\n' +
+         '• Those moments point to real support and small changes that could help\n\n' +
+         'One small step: try one tiny thing this week — even very small — that builds a bit more of that easier feeling.';
+}
 export async function getClosingReflection(
   userMessage: string,
   history: Message[] = []

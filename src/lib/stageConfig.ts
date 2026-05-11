@@ -7,9 +7,9 @@ export function getBranch(score: number): Branch {
 }
 
 export const BRANCH_STAGES: Record<Branch, Stage[]> = {
-  low: ['explore_helping', 'strengths_amplify', 'future_maintenance', 'summary'],
-  mid: ['explore_variability', 'exceptions_mid', 'small_shifts', 'summary'],
-  high: ['safety_check', 'exceptions_high', 'strengths_high', 'next_steps_high', 'summary'],
+  low: ['explore_helping', 'strengths_amplify', 'future_maintenance', 'observations_offer', 'step_confirmation', 'summary'],
+  mid: ['explore_variability', 'exceptions_mid', 'small_shifts', 'observations_offer', 'step_confirmation', 'summary'],
+  high: ['safety_check', 'exceptions_high', 'strengths_high', 'next_steps_high', 'observations_offer', 'step_confirmation', 'summary'],
 };
 
 export const BRANCH_OPENING: Record<Branch, { validation: string; question: string }> = {
@@ -40,5 +40,7 @@ export const STAGE_PROGRESS: Record<Stage, number> = {
   exceptions_high: 50,
   strengths_high: 65,
   next_steps_high: 80,
+  observations_offer: 90,
+  step_confirmation: 95,
   summary: 100,
 };

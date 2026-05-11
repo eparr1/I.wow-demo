@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Stage, Branch } from './types';
 import { STAGE_PROGRESS, BRANCH_STAGES, BRANCH_OPENING, getBranch } from './lib/stageConfig';
-import { getBotResponse, getClosingReflection, getSummaryTransition } from './lib/getBotResponse';
+import { getBotResponse, getObservationsAndSteps, getClosingReflection, getSummaryTransition } from './lib/getBotResponse';
 import ProgressBar from './components/ProgressBar';
 import ChatWindow from './components/ChatWindow';
 import InputBar from './components/InputBar';
@@ -32,6 +32,27 @@ export default function App() {
     return YES_SIGNALS.some((s) => lower.includes(s));
   }
 
+  function isAffirmative(text: string): boolean {
+    const lower = text.toLowerCase().trim();
+    const YES_SIGNALS = [
+      'yes', 'yeah', 'yep', 'yup', 'sure', 'ok', 'okay', 'please',
+      'absolutely', 'definitely', 'sounds good', 'i will', 'i can',
+    ];
+    return YES_SIGNALS.some((s) => lower.includes(s));
+  }
+
+  function isNegative(text: string): boolean {
+    const lower = text.toLowerCase().trim();
+    const NO_SIGNALS = [
+      'no', 'not really', 'nope', 'nah', "don't", "do not", 'not sure',
+      'maybe not', 'i dont think so', 'i do not think so',
+    ];
+    return NO_SIGNALS.some((s) => lower.includes(s));
+  }
+
+  const OBSERVATIONS_OFFER =
+    'Would you like to hear my observations on what you\'ve shared, and what might be a realistic next step?';
+
   const addBotMessage = async (content: string): Promise<void> => {
     setIsTyping(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -47,7 +68,7 @@ export default function App() {
     setChatOpen(true);
     setTimeout(() => {
       addBotMessage(
-        "Hi — it's lovely to meet you today at the Academic Collaboration Showcase! This short demo is a space to pause and reflect on how things have been feeling in your work recently, using one question from our I.ROC framework. I'll guide you through a brief check-in and we'll take a moment to explore how things have been for you over the past few months."
+        "Hi, it's lovely to meet you today at the Academic Collaboration Showcase. This check-in is a chance to pause and reflect on how things have been feeling in work recently, using one question from our I.ROC framework, and to think about what may help you feel more supported over the next week."
       );
     }, 550);
   };
@@ -56,7 +77,6 @@ export default function App() {
     setStage('scale_question');
     await addBotMessage("Thinking about the past 3 months, how often has work left you feeling overwhelmed, emotionally drained, or running low on energy?");
     await addBotMessage("There's no right answer here — just choose the number that feels closest.");
-    await addBotMessage("On a scale from 1 to 6 — where 1 is 'never' and 6 is 'all of the time' — tap the number that feels closest.");
   };
 
   const handleScoreSelect = async (num: number) => {
@@ -79,7 +99,10 @@ export default function App() {
         `Here's what I heard from you today:\n\n` +
         `• What's been helping: ${val(responses.explore_helping)}\n\n` +
         `• What supports that: ${val(responses.strengths_amplify)}\n\n` +
-        `• Going forward: ${val(responses.future_maintenance)}`
+        `• Going forward: ${val(responses.future_maintenance)}\n\n` +
+        `What stands out:\n` +
+        `• There are already things helping you stay steady\n` +
+        `• Keeping those visible and protecting them where you can may help maintain that balance over the next few weeks`
       );
     }
     if (b === 'mid') {
@@ -87,7 +110,10 @@ export default function App() {
         `Here's what I heard from you today:\n\n` +
         `• What tends to make it better: ${val(responses.explore_variability)}\n\n` +
         `• When it feels more manageable: ${val(responses.exceptions_mid)}\n\n` +
-        `• A small shift to try: ${val(responses.small_shifts)}`
+        `• A small shift to try: ${val(responses.small_shifts)}\n\n` +
+        `What stands out:\n` +
+        `• This is not the same every day\n` +
+        `• Noticing what makes things heavier and what makes them more manageable gives you useful information to work with`
       );
     }
     return (
@@ -95,7 +121,11 @@ export default function App() {
       `• Support at work: ${val(responses.safety_check)}\n\n` +
       `• A time things felt more manageable: ${val(responses.exceptions_high)}\n\n` +
       `• What made that different: ${val(responses.strengths_high)}\n\n` +
-      `• One small step: ${val(responses.next_steps_high)}`
+      `• One small step: ${val(responses.next_steps_high)}\n\n` +
+      `What stands out:\n` +
+      `• Things have been feeling stretched lately\n` +
+      `• There are still clues about what support, conditions, or small changes might help\n` +
+      `• You don't have to solve everything at once — the next step only needs to be small`
     );
   }
 
@@ -110,7 +140,7 @@ export default function App() {
       if (isReadyForSummary(userText)) {
         setAwaitingSummaryConfirm(false);
         await addBotMessage(buildSummary(branch, stageResponses));
-        await addBotMessage("Thank you for taking the time to share this with me today. What you've reflected on here is genuinely valuable — and the awareness you've brought to it is a real strength.");
+        await addBotMessage("Thank you for taking the time to reflect. What you've noticed here is something you can come back to, especially if work starts to feel heavier again.");
         setStage('summary');
       } else {
         // They said something extra — acknowledge briefly, then stay at the gate
@@ -130,6 +160,40 @@ export default function App() {
       return;
     }
 
+    if (stage === 'observations_offer') {
+      if (isAffirmative(userText)) {
+        const observationsText = await getObservationsAndSteps(branch, stageResponses, messages);
+        if (observationsText) await addBotMessage(observationsText);
+        setStage('step_confirmation');
+        await addBotMessage('Does that step sound good to you?');
+        return;
+      }
+      if (isNegative(userText)) {
+        await addBotMessage('That\'s totally fine. Thank you for taking the time to reflect today. Take care.');
+        setStage('summary');
+        return;
+      }
+      await addBotMessage(
+        "Just let me know if you'd like to hear my thoughts — or if you'd prefer to wrap up here."
+      );
+      return;
+    }
+
+    if (stage === 'step_confirmation') {
+      if (isAffirmative(userText)) {
+        await addBotMessage('Great. That\'s your focus for the week ahead. Take care, and I\'ll see you next time.');
+        setStage('summary');
+        return;
+      }
+      if (isNegative(userText)) {
+        await addBotMessage('That\'s equally okay — sometimes just noticing the pattern itself is the valuable step. Either way, you have something to come back to. Take care, and I\'ll see you next time.');
+        setStage('summary');
+        return;
+      }
+      await addBotMessage('Let me know if it feels right, or if you\'d like to think about it differently.');
+      return;
+    }
+
     const updatedResponses = { ...stageResponses, [stage]: userText };
     setStageResponses(updatedResponses);
 
@@ -140,14 +204,27 @@ export default function App() {
     const botText = await getBotResponse(stage, userText, messages);
     if (botText) await addBotMessage(botText);
 
-    if (nextStage === 'summary') {
-      if (botText?.includes('?')) {
+    if (botText?.includes('?')) {
+      if (nextStage === 'summary') {
         // Bot asked a question — let the user answer before offering the summary
         setPendingClose(true);
-      } else {
-        setAwaitingSummaryConfirm(true);
-        await addBotMessage(SUMMARY_INVITE);
+        return;
       }
+      if (nextStage === 'observations_offer') {
+        // Final branch question; wait for the user's reply before offering observations.
+        return;
+      }
+    }
+
+    if (nextStage === 'observations_offer') {
+      setStage('observations_offer');
+      await addBotMessage(OBSERVATIONS_OFFER);
+      return;
+    }
+
+    if (nextStage === 'summary') {
+      setAwaitingSummaryConfirm(true);
+      await addBotMessage(SUMMARY_INVITE);
     } else if (nextStage) {
       setStage(nextStage);
     }

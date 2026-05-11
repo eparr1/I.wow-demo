@@ -17,6 +17,8 @@ export type Stage =
   | 'strengths_high'
   | 'next_steps_high'
   // shared end
+  | 'observations_offer'
+  | 'step_confirmation'
   | 'summary';
 
 export type Message = {
