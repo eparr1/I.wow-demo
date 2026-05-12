@@ -281,11 +281,11 @@ export default function App() {
 
       {/* Title bar — always visible */}
       <div
-        className="px-6 py-4 border-b border-slate-200 bg-white/80 backdrop-blur-sm"
-        style={{ position: 'relative', zIndex: 1 }}
+        className="px-6 py-4 border-b border-slate-300 bg-white/80 backdrop-blur-sm"
+        style={{ position: 'relative', zIndex: 50 }}
       >
-        <h1 className="text-6xl font-semibold text-sky-950 tracking-wide text-center font-['Bricolage_Grotesque']">I.WOW</h1>
-        <p className="text-xs text-lime-700 mt-0.5 text-center p-1 font-['Bricolage_Grotesque']">Your Workplace Wellbeing Check-in</p>
+        <h1 className="text-6xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text tracking-wide text-center font-poppins">I.WOW</h1>
+        <p className="text-xl text-blue-950 mt-0.5 text-center p-1 font-poppins">Your Workplace Wellbeing Check-in</p>
       </div>
 
       {/* Content area */}
