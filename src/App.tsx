@@ -281,7 +281,7 @@ export default function App() {
 
       {/* Title bar — always visible */}
       <div
-        className="px-6 py-4 border-b border-slate-300 bg-white/80 backdrop-blur-sm"
+        className="px-6 py-4 border-2 m-4 rounded-xl border-slate-200 "
         style={{ position: 'relative', zIndex: 50 }}
       >
         <h1 className="text-6xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text tracking-wide text-center font-poppins">I.WOW</h1>
