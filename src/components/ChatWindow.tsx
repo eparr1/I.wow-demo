@@ -19,7 +19,7 @@ export default function ChatWindow({ messages, isTyping, stage, onScoreSelect }:
   }, [messages, isTyping]);
 
   return (
-    <div className="px-4 py-6 space-y-3">
+    <div className="px-4 py-4 flex flex-col justify-end min-h-full gap-3">
       {messages.map((msg) => (
         <MessageBubble key={msg.id} message={msg} />
       ))}

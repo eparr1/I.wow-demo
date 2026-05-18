@@ -279,17 +279,37 @@ export default function App() {
       {/* Progress bar — only visible once chat is open */}
       {chatOpen && <ProgressBar progress={STAGE_PROGRESS[stage]} />}
 
-      {/* Title bar — always visible */}
+      {/* Title bar — collapses once chat is open */}
       <div
-        className="px-6 py-4 border-2 m-4 rounded-xl border-slate-200 "
-        style={{ position: 'relative', zIndex: 50 }}
+        className="px-4 rounded-xl overflow-hidden transition-all duration-500 ease-in-out"
+        style={{
+          position: 'relative',
+          zIndex: 50,
+          height: chatOpen ? '48px' : '112px',
+          marginTop: chatOpen ? '8px' : '16px',
+          marginBottom: chatOpen ? '0px' : '16px',
+        }}
       >
-        <h1 className="text-6xl font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text tracking-wide text-center font-poppins">I.WOW</h1>
-        <p className="text-xl text-blue-950 mt-0.5 text-center p-1 font-poppins">Your Workplace Wellbeing Check-in</p>
+        <h1
+          className="font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text tracking-wide font-poppins transition-all duration-500"
+          style={{
+            fontSize: chatOpen ? '2.5rem' : '3.75rem',
+            lineHeight: chatOpen ? '48px' : '1.1',
+            textAlign: chatOpen ? 'left' : 'center',
+          }}
+        >
+          I.WOW
+        </h1>
+        <p
+          className="text-xl text-blue-950 text-center p-1 font-poppins transition-all duration-500 origin-top"
+          style={{ opacity: chatOpen ? 0 : 1, transform: chatOpen ? 'scaleY(0)' : 'scaleY(1)' }}
+        >
+          Your Workplace Wellbeing Check-in
+        </p>
       </div>
 
       {/* Content area */}
-      <div className="flex-1 relative mx-4 mb-4 mt-3">
+      <div className="flex-1 relative mx-4 mb-4 mt-3 text-xl">
 
         {/* Landing Begin button — fades out on open */}
         <div
@@ -311,16 +331,17 @@ export default function App() {
 
         {/* Chat box — scales in from center */}
         <div
-          className="absolute inset-0 flex flex-col rounded-2xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm overflow-hidden"
-          style={{
-            zIndex: 1,
-            transform: chatOpen ? 'scale(1)' : 'scale(0.06)',
-            opacity: chatOpen ? 1 : 0,
-            transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out',
-            transformOrigin: 'center center',
-            pointerEvents: chatOpen ? 'auto' : 'none',
-          }}
+          className="absolute inset-0 mx-auto w-4/5 h-full flex flex-col rounded-2xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm overflow-hidden"
+           style={{
+          zIndex: 1,
+          transform: chatOpen ? 'scale(1)' : 'scale(0.06)',
+          opacity: chatOpen ? 1 : 0,
+          transition: 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out',
+          transformOrigin: 'center top',
+          pointerEvents: chatOpen ? 'auto' : 'none',
+        }}
         >
+
           <div className="flex-1 overflow-y-auto">
             <ChatWindow
               messages={messages}
@@ -334,7 +355,7 @@ export default function App() {
             <div className="px-4 pb-4 flex justify-center">
               <button
                 onClick={handleBegin}
-                className="px-6 py-3 bg-slate-600 text-white rounded-xl text-sm font-medium hover:bg-slate-700 transition-colors"
+                className="px-6 py-3 bg-slate-600 text-white rounded-xl text-base font-medium hover:bg-slate-700 transition-colors"
               >
                 Let's begin →
               </button>
@@ -345,7 +366,7 @@ export default function App() {
             <div className="px-4 pb-4 flex justify-center">
               <button
                 onClick={handleReset}
-                className="px-6 py-3 bg-slate-600 text-white rounded-xl text-sm font-medium hover:bg-slate-700 transition-colors"
+                className="px-6 py-3 bg-slate-600 text-white rounded-xl text-base font-medium hover:bg-slate-700 transition-colors"
               >
                 Start again →
               </button>
