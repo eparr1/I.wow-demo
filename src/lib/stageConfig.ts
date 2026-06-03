@@ -9,21 +9,21 @@ export function getBranch(score: number): Branch {
 export const BRANCH_STAGES: Record<Branch, Stage[]> = {
   low: ['explore_helping', 'strengths_amplify', 'future_maintenance', 'observations_offer', 'step_confirmation', 'summary'],
   mid: ['explore_variability', 'exceptions_mid', 'small_shifts', 'observations_offer', 'step_confirmation', 'summary'],
-  high: ['safety_check', 'exceptions_high', 'strengths_high', 'next_steps_high', 'observations_offer', 'step_confirmation', 'summary'],
+  high: ['explore_high', 'exceptions_high', 'support_check', 'strengths_high', 'next_steps_high', 'observations_offer', 'step_confirmation', 'summary'],
 };
 
 export const BRANCH_OPENING: Record<Branch, { validation: string; question: string }> = {
   low: {
-    validation: "That's good to hear — a score like that suggests things are generally feeling manageable.",
-    question: "What do you think has been helping keep things feeling steady?",
+    validation: "A score like that suggests things have been fairly steady — let's explore what's been keeping them that way.",
+    question: "What's been keeping things feeling steady for you day to day?",
   },
   mid: {
     validation: "That sounds like it's been quite up and down — manageable at some points, but heavier at others.",
-    question: "What has felt most difficult about that recently?",
+    question: "What tends to make the difference between a better day and a harder one?",
   },
   high: {
-    validation: "Thank you for sharing that with me — a score like that tells me things have been quite a stretch lately.",
-    question: "When things have been feeling this stretched, it can help to check what support is around you. Do you feel like there's anyone at work you could talk to — a manager, colleague, HR, occupational health, or EAP?",
+    validation: "A score like that tells me it's been a real stretch lately — thank you for being honest about that.",
+    question: "What's been the hardest part of it lately?",
   },
 };
 
@@ -36,10 +36,11 @@ export const STAGE_PROGRESS: Record<Stage, number> = {
   explore_variability: 35,
   exceptions_mid: 55,
   small_shifts: 75,
-  safety_check: 30,
-  exceptions_high: 50,
+  explore_high: 30,
+  exceptions_high: 43,
+  support_check: 55,
   strengths_high: 65,
-  next_steps_high: 80,
+  next_steps_high: 78,
   observations_offer: 90,
   step_confirmation: 95,
   summary: 100,

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Stage, Branch } from './types';
 import { STAGE_PROGRESS, BRANCH_STAGES, BRANCH_OPENING, getBranch } from './lib/stageConfig';
-import { getBotResponse, getObservationsAndSteps, getClosingReflection, getSummaryTransition } from './lib/getBotResponse';
+import { getBotResponse, getObservationsAndSteps, getClosingReflection, getSummaryTransition, getSummaryInsight } from './lib/getBotResponse';
 import ProgressBar from './components/ProgressBar';
 import ChatWindow from './components/ChatWindow';
 import InputBar from './components/InputBar';
@@ -51,7 +51,7 @@ export default function App() {
   }
 
   const OBSERVATIONS_OFFER =
-    'Would you like to hear my observations on what you\'ve shared, and what might be a realistic next step?';
+    'Before we wrap up, I have a couple of thoughts on what you\'ve shared — would it help to hear them?';
 
   const addBotMessage = async (content: string): Promise<void> => {
     setIsTyping(true);
@@ -66,17 +66,18 @@ export default function App() {
 
   const handleOpenChat = () => {
     setChatOpen(true);
-    setTimeout(() => {
-      addBotMessage(
-        "Hi, it's lovely to meet you today at the Academic Collaboration Showcase. This check-in is a chance to pause and reflect on how things have been feeling in work recently, using one question from our I.ROC framework, and to think about what may help you feel more supported over the next week."
+    setTimeout(async () => {
+      await addBotMessage(
+        "Hi — this is your I.WOW wellbeing check-in at Penumbra. It's a short space just for you, and nothing you share here goes anywhere else."
       );
+      await handleBegin();
     }, 550);
   };
 
   const handleBegin = async () => {
     setStage('scale_question');
-    await addBotMessage("Thinking about the past 3 months, how often has work left you feeling overwhelmed, emotionally drained, or running low on energy?");
     await addBotMessage("There's no right answer here — just choose the number that feels closest.");
+    await addBotMessage("Thinking about the past 3 months, how often has work left you feeling overwhelmed, emotionally drained, or running low on energy?");
   };
 
   const handleScoreSelect = async (num: number) => {
@@ -91,46 +92,47 @@ export default function App() {
     await addBotMessage(question);
   };
 
-  function buildSummary(b: Branch, responses: Partial<Record<Stage, string>>): string {
+  async function buildSummary(b: Branch, responses: Partial<Record<Stage, string>>): Promise<string> {
     const val = (s: string | undefined) => s ?? '—';
+    const insight = await getSummaryInsight(b, responses);
 
     if (b === 'low') {
       return (
-        `Here's what I heard from you today:\n\n` +
-        `• What's been helping: ${val(responses.explore_helping)}\n\n` +
-        `• What supports that: ${val(responses.strengths_amplify)}\n\n` +
+        `Here's what came out of today's check-in:\n\n` +
+        `• What you said is helping: ${val(responses.explore_helping)}\n\n` +
+        `• What keeps that going: ${val(responses.strengths_amplify)}\n\n` +
         `• Going forward: ${val(responses.future_maintenance)}\n\n` +
-        `What stands out:\n` +
-        `• There are already things helping you stay steady\n` +
-        `• Keeping those visible and protecting them where you can may help maintain that balance over the next few weeks`
+        `What stands out:\n${insight}`
       );
     }
     if (b === 'mid') {
       return (
-        `Here's what I heard from you today:\n\n` +
-        `• What tends to make it better: ${val(responses.explore_variability)}\n\n` +
-        `• When it feels more manageable: ${val(responses.exceptions_mid)}\n\n` +
-        `• A small shift to try: ${val(responses.small_shifts)}\n\n` +
-        `What stands out:\n` +
-        `• This is not the same every day\n` +
-        `• Noticing what makes things heavier and what makes them more manageable gives you useful information to work with`
+        `Here's what came out of today's check-in:\n\n` +
+        `• What makes it more manageable: ${val(responses.explore_variability)}\n\n` +
+        `• When it shifts: ${val(responses.exceptions_mid)}\n\n` +
+        `• One small thing to try: ${val(responses.small_shifts)}\n\n` +
+        `What stands out:\n${insight}`
       );
     }
     return (
-      `Here's what I heard from you today:\n\n` +
-      `• Support at work: ${val(responses.safety_check)}\n\n` +
-      `• A time things felt more manageable: ${val(responses.exceptions_high)}\n\n` +
-      `• What made that different: ${val(responses.strengths_high)}\n\n` +
+      `Here's what came out of today's check-in:\n\n` +
+      `• What's been weighing on you: ${val(responses.explore_high)}\n\n` +
+      `• When things felt different: ${val(responses.exceptions_high)}\n\n` +
+      `• What made the difference: ${val(responses.support_check)}\n\n` +
+      `• Support around you: ${val(responses.strengths_high)}\n\n` +
       `• One small step: ${val(responses.next_steps_high)}\n\n` +
-      `What stands out:\n` +
-      `• Things have been feeling stretched lately\n` +
-      `• There are still clues about what support, conditions, or small changes might help\n` +
-      `• You don't have to solve everything at once — the next step only needs to be small`
+      `What stands out:\n${insight}`
     );
   }
 
   const handleUserSubmit = async () => {
-    if (!inputValue.trim() || !branch) return;
+    if (!inputValue.trim()) return;
+    if (stage === 'intro') {
+      setInputValue('');
+      await handleBegin();
+      return;
+    }
+    if (!branch) return;
     const userText = inputValue;
     addUserMessage(userText);
     setInputValue('');
@@ -139,8 +141,8 @@ export default function App() {
     if (awaitingSummaryConfirm) {
       if (isReadyForSummary(userText)) {
         setAwaitingSummaryConfirm(false);
-        await addBotMessage(buildSummary(branch, stageResponses));
-        await addBotMessage("Thank you for taking the time to reflect. What you've noticed here is something you can come back to, especially if work starts to feel heavier again.");
+        await addBotMessage(await buildSummary(branch, stageResponses));
+        await addBotMessage("Thank you for taking the time with this today. What you've found here is worth holding onto — and you can come back whenever you need to.");
         setStage('summary');
       } else {
         // They said something extra — acknowledge briefly, then stay at the gate
@@ -165,11 +167,11 @@ export default function App() {
         const observationsText = await getObservationsAndSteps(branch, stageResponses, messages);
         if (observationsText) await addBotMessage(observationsText);
         setStage('step_confirmation');
-        await addBotMessage('Does that step sound good to you?');
+        await addBotMessage('How does that land for you — does it feel like something you could actually try this week?');
         return;
       }
       if (isNegative(userText)) {
-        await addBotMessage('That\'s totally fine. Thank you for taking the time to reflect today. Take care.');
+        await addBotMessage('That\'s completely fine — thank you for taking the time today. Take care of yourself.');
         setStage('summary');
         return;
       }
@@ -186,7 +188,7 @@ export default function App() {
         return;
       }
       if (isNegative(userText)) {
-        await addBotMessage('That\'s equally okay — sometimes just noticing the pattern itself is the valuable step. Either way, you have something to come back to. Take care, and I\'ll see you next time.');
+        await addBotMessage('That\'s equally fine — sometimes just having more clarity on what\'s going on is the valuable thing. Either way, you have something to come back to. Take care.');
         setStage('summary');
         return;
       }
@@ -297,7 +299,7 @@ export default function App() {
             lineHeight: chatOpen ? '48px' : '1.1',
             textAlign: chatOpen ? 'left' : 'center',
           }}
-        >
+        > 
           I.WOW
         </h1>
         <p
@@ -351,17 +353,6 @@ export default function App() {
             />
           </div>
 
-          {stage === 'intro' && !isTyping && (
-            <div className="px-4 pb-4 flex justify-center">
-              <button
-                onClick={handleBegin}
-                className="px-6 py-3 bg-slate-600 text-white rounded-xl text-base font-medium hover:bg-slate-700 transition-colors"
-              >
-                Let's begin →
-              </button>
-            </div>
-          )}
-
           {stage === 'summary' && (
             <div className="px-4 pb-4 flex justify-center">
               <button
@@ -378,7 +369,7 @@ export default function App() {
             onChange={setInputValue}
             onSubmit={handleUserSubmit}
             disabled={isTyping}
-            hidden={stage === 'intro' || stage === 'scale_question' || stage === 'summary'}
+            hidden={stage === 'scale_question' || stage === 'summary'}
           />
         </div>
       </div>

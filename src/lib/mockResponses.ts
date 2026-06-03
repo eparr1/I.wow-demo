@@ -5,79 +5,75 @@ export const mockResponses = {
   // Low branch ---------------------------------------------------------------
 
   explore_helping: [
-    "That makes a lot of sense — sounds like you've found something that genuinely works for you. Are there any small habits, boundaries, or ways of working that are helping with that?",
-    "It's really worth noticing those things — they clearly make a difference for you. And are there any small habits, boundaries, or ways of working that are also playing a part?",
-    "Thank you for sharing that — those things sound like real anchors. Are there any small habits, boundaries, or ways of working you'd say are helping too?",
+    "So you've got something that's actually working for you. What else has been helping you stay steady day to day?",
+    "That makes sense — you can see what's keeping things manageable. Are there other routines or structures that are part of that?",
+    "That tells you something real about what works. What else has been helping you hold things together?",
   ],
 
   strengths_amplify: [
-    "Those sound like real strengths worth holding onto. How could you keep that going over the next few weeks?",
-    "It's meaningful that you've noticed that about yourself — those habits clearly matter. How could you keep that going, even in small ways, over the next few weeks?",
-    "Thank you for sharing — that kind of self-awareness is genuinely valuable. How could you keep that going over the next few weeks?",
+    "Those sound like real strengths — you can see what's working. How do you want to do more of that this week?",
+    "You've got a clear read on what helps you. How do you want to build on that this week?",
+    "That kind of clarity matters. How do you want to do more of that going forward?",
   ],
 
   future_maintenance: [
-    "That sounds like a grounded and meaningful intention — even a small step in that direction counts. Before we close, it's worth acknowledging: just noticing what's been working is a form of resilience. Thank you for taking the time to reflect on this today.",
-    "That feels like a real commitment, and small ones like that can make a real difference over time. Before we close — what you've shared today reflects something genuinely positive, and that's worth holding onto. Thank you.",
-    "That's a thoughtful way to carry this forward. Before we close — the awareness you've brought to this today is something to acknowledge. Thank you for sharing it with me.",
+    "You've got real clarity on what's steadying you. That matters.",
+    "You know what works for you — just keep doing that.",
+    "The structure you've built is worth protecting.",
   ],
 
   // Mid branch ---------------------------------------------------------------
 
   explore_variability: [
-  "It sounds like things haven't been easy sometimes. At the same time, experiences like this can shift from day to day — have there been moments where work has felt even slightly more manageable?",
-
-  "Thank you for sharing that. Sometimes when people describe things as feeling up and down, there can still be certain moments or situations that feel a bit lighter. Have you noticed any of those recently?",
-
-  "That sounds genuinely draining at times. I\'m also wondering whether there are situations, people, or parts of the day where things tend to feel slightly easier?",
-
-  "It sounds like there\'s been a real level of pressure there. Even within difficult periods though, are there moments where things feel a little steadier or less intense?",
-
-  "Thanks for reflecting on that. Since it sounds like things may fluctuate a bit, have you noticed any times where the emotional pressure feels less strong?"
-],
+    "It sounds like things haven't been easy. When was work feeling less heavy recently?",
+    "That sounds genuinely draining at times. Have there been days when even one part of it felt slightly lighter?",
+    "There's real pressure there. When was it feeling even a bit more manageable?",
+    "Things do fluctuate. When was work feeling less heavy for you?",
+    "That makes sense given what you're carrying. When was the last time it felt even slightly easier?",
+  ],
 
   exceptions_mid: [
-    "It sounds like there are moments you can draw on — those count for more than you might think. What do you think might move it just one point lower on that scale, not jumping to fine, just one small step?",
-    "That's a useful thread to pull on. What might move things just one point lower on that scale?",
-    "Thank you — those moments of relief are really important. What do you think might help move it just one point lower?",
+    "It sounds like there are moments you can draw on. What would make one day feel slightly easier this week?",
+    "That's a useful thread. What would help make one day feel slightly easier?",
+    "Those moments are worth paying attention to. What would help you have one easier day this week?",
   ],
 
   small_shifts: [
-    "That feels like a meaningful and achievable step. Thank you for sharing this with me.",
-    "That's a good thing to hold in mind. Before we close — even the awareness you've brought to this today is something to acknowledge. Thank you for talking this through.",
-    "That sounds like a real step forward. Before we close — thank you for this; it takes honesty to reflect the way you have today.",
+    "You can see it shifts for you. That's understanding worth holding.",
+    "One small thing you figure out this week could change the whole week's feel.",
+    "That feels concrete and doable. Small steps like that add up.",
   ],
-
-  
 
   // High branch --------------------------------------------------------------
 
-  safety_check_support: [
-    "Thank you for sharing that — it's really good to know there are people around you. If it's okay to continue, it makes sense you're feeling this way — a sustained stretch of this is exhausting. Has there been a point in the last few months, even just a week or a few days, when work felt slightly more manageable? What was different then?",
-    "That's really good to hear — having support around you makes a real difference. If it's okay, I'd like to explore this a bit more with you. Has there been a point in the last few months, even just a few days, when things felt slightly more manageable? What do you think was different then?",
+  explore_high: [
+    "That kind of relentless pressure takes something out of you. Has there been any point in the last few months, even just a week or a few days, when things felt even slightly more manageable?",
+    "Carrying that for a sustained stretch is exhausting. Has there been a point, even briefly, when work felt a bit less heavy?",
+    "That makes complete sense given what you're describing. Has there been any time recently when things felt even slightly different — even just a few days?",
   ],
 
-  safety_check_no_support: [
-    "Thank you for being honest — it's important you know that occupational health and your employee assistance programme are there for exactly this kind of moment, and reaching out to them is a real option. If it's okay to continue, has there been a point in the last few months, even just a week or a few days, when work felt slightly more manageable? What was different then?",
-    "I really appreciate you telling me that — please do know that your EAP or occupational health team are there for moments like this, and it's worth reaching out if you can. If it's okay, let's continue — has there been a point in the last few months, even just a few days, when things felt slightly more manageable? What do you think was different?",
+  support_check: [
+    "That tells you something real about what helps. When things feel stretched like this, is there anyone at work you feel you can lean on?",
+    "Worth holding onto that — it gives you something to work with. Is there anyone at work you tend to turn to when things get heavy?",
+    "You can see the difference when that changes. When it gets hard like this, who at work, if anyone, do you lean on?",
   ],
 
   exceptions_high: [
-    "That period is really worth paying attention to. Was it something about the workload, the people around you, how you were working — or something else? What do you think made the difference?",
-    "It's meaningful that you can identify a time like that. What do you think made the difference — was it the workload, the people, how you were working, or something else?",
-    "Thank you for going there — those moments matter more than they might seem. Was it something about the workload, the people around you, or how you were working? What do you think made the difference?",
+    "That period is worth paying attention to. What was different on that easier day — the workload, the people around you, how you were working?",
+    "You can identify a time when it felt different. What do you think made the difference — the workload, the people, how you were working?",
+    "Those moments matter more than they might seem. What was different on that easier day?",
   ],
 
   strengths_high: [
-    "That's a really important insight — sounds like you have more understanding of what helps than you might think. What's one small thing you could try to do this week, even something minor, that might create a bit more of that for yourself at work?",
-    "It's worth holding onto that understanding — it tells you something real about what works for you. What's one small thing you could try this week, even very small, that might bring a little more of that?",
-    "Thank you — that kind of clarity is genuinely valuable. What's one small thing you could try to do this week that might create even a bit more of that?",
+    "That's a real insight — you have more understanding of what helps than you might think. What's one thing you could do this week that builds a bit more of that?",
+    "It's worth holding onto that — it tells you something real about what works for you. What's one thing you could do this week, even something small?",
+    "That kind of clarity is genuinely valuable. What's one thing you could do this week that builds even a bit more of that?",
   ],
 
   next_steps_high: [
-    "That sounds like a thoughtful and grounded step — even something small can shift how a week feels. Thank you for talking this through with me.",
-    "That's a meaningful commitment, and small steps like that really do add up. Thank you so much for talking this through with me today.",
-    "That feels like a real step forward. Thank you for taking the time to reflect on this — it takes real honesty to do what you've done today.",
+    "That's a concrete step. Small boundaries really do shape how a day feels.",
+    "You've got a real plan. Let's see how that week goes.",
+    "That's specific and sustainable. That matters.",
   ],
 };
 

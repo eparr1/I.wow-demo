@@ -12,8 +12,9 @@ export type Stage =
   | 'exceptions_mid'
   | 'small_shifts'
   // high branch (score 5–6)
-  | 'safety_check'
+  | 'explore_high'
   | 'exceptions_high'
+  | 'support_check'
   | 'strengths_high'
   | 'next_steps_high'
   // shared end
