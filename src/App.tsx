@@ -68,7 +68,7 @@ export default function App() {
     setChatOpen(true);
     setTimeout(async () => {
       await addBotMessage(
-        "Hi — this is your I.WOW wellbeing check-in at Penumbra. It's a short space just for you, and nothing you share here goes anywhere else."
+        "Hi — this is your I.WOW wellbeing check-in at Penumbra. This is a short demo that goes through one of the questions adapted from the I.ROC questionaire, to help you reflect and explore your wellbeing as an employee. It's a short space just for you, and nothing you share here goes anywhere else."
       );
       await handleBegin();
     }, 550);
@@ -315,7 +315,7 @@ export default function App() {
 
         {/* Landing Begin button — fades out on open */}
         <div
-          className="absolute inset-0 flex items-center justify-center"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6"
           style={{
             zIndex: 10,
             opacity: chatOpen ? 0 : 1,
@@ -329,6 +329,19 @@ export default function App() {
           >
             Start Demo →
           </button>
+
+          {/* Research framing — explains this is a feedback-gathering prototype, not the live product */}
+          <div className="max-w-2xl rounded-2xl border border-slate-300 bg-white/60 px-6 py-4 text-center">
+            <p className="text-base text-slate-600 font-poppins leading-relaxed">
+              You're about to try an early prototype of the I.WOW chatbot. We're not testing you,
+              we're testing it, and your honest reactions are exactly what we need.
+            </p>
+            <p className="text-base text-slate-600 font-poppins leading-relaxed mt-2">
+              As you go through it, notice what feels natural, what feels off, and anything that
+              seems inaccurate or out of place. At the end, we'll ask what you thought and what
+              you'd want from a chatbot like this.
+            </p>
+          </div>
         </div>
 
         {/* Chat box — scales in from center */}
