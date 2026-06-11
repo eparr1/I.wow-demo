@@ -68,7 +68,7 @@ export default function App() {
     setChatOpen(true);
     setTimeout(async () => {
       await addBotMessage(
-        "Hi — this is your I.WOW wellbeing check-in at Penumbra. This is a short demo that goes through one of the questions adapted from the I.ROC questionaire, to help you reflect and explore your wellbeing as an employee. It's a short space just for you, and nothing you share here goes anywhere else."
+        "Hi — this is your I.WOW wellbeing check-in at [organization]. This is a short demo that goes through one of the questions adapted from the I.ROC questionaire, to help you reflect and explore your wellbeing as an employee. It's a short space just for you, and nothing you share here goes anywhere else."
       );
       await handleBegin();
     }, 550);
@@ -248,7 +248,7 @@ export default function App() {
   void score;
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 font-sans relative overflow-hidden">
+    <div className="h-dvh flex flex-col bg-slate-50 font-sans relative overflow-hidden pb-[env(safe-area-inset-bottom)]">
 
       {/* Background blurs */}
       <div
@@ -303,7 +303,7 @@ export default function App() {
           I.WOW
         </h1>
         <p
-          className="text-xl text-blue-950 text-center p-1 font-poppins transition-all duration-500 origin-top"
+          className="text-base sm:text-xl text-blue-950 text-center p-1 font-poppins transition-all duration-500 origin-top"
           style={{ opacity: chatOpen ? 0 : 1, transform: chatOpen ? 'scaleY(0)' : 'scaleY(1)' }}
         >
           Your Workplace Wellbeing Check-in
@@ -311,11 +311,11 @@ export default function App() {
       </div>
 
       {/* Content area */}
-      <div className="flex-1 relative mx-4 mb-4 mt-3 text-xl">
+      <div className="flex-1 relative mx-2 sm:mx-4 mb-4 mt-3 text-base sm:text-xl">
 
         {/* Landing Begin button — fades out on open */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-4 sm:px-6"
           style={{
             zIndex: 10,
             opacity: chatOpen ? 0 : 1,
@@ -325,28 +325,27 @@ export default function App() {
         >
           <button
             onClick={handleOpenChat}
-            className="px-8 py-4 bg-slate-700 text-white rounded-2xl text-base font-medium tracking-wide hover:bg-slate-800 transition-colors font-['Bricolage_Grotesque']"
+            className="px-6 sm:px-8 py-4 bg-slate-700 text-white rounded-2xl text-base font-medium tracking-wide hover:bg-slate-800 transition-colors font-['Bricolage_Grotesque']"
           >
             Start Demo →
           </button>
 
           {/* Research framing — explains this is a feedback-gathering prototype, not the live product */}
-          <div className="max-w-2xl rounded-2xl border border-slate-300 bg-white/60 px-6 py-4 text-center">
-            <p className="text-base text-slate-600 font-poppins leading-relaxed">
+          <div className="max-w-2xl rounded-2xl border border-slate-300 bg-white/60 px-4 sm:px-6 py-4 text-center">
+            <p className="text-sm sm:text-base text-slate-600 font-poppins leading-relaxed">
               You're about to try an early prototype of the I.WOW chatbot. We're not testing you,
               we're testing it, and your honest reactions are exactly what we need.
             </p>
-            <p className="text-base text-slate-600 font-poppins leading-relaxed mt-2">
+            <p className="text-sm sm:text-base text-slate-600 font-poppins leading-relaxed mt-2">
               As you go through it, notice what feels natural, what feels off, and anything that
-              seems inaccurate or out of place. At the end, we'll ask what you thought and what
-              you'd want from a chatbot like this.
+              seems inaccurate or out of place. At the end, we'll ask what you thought
             </p>
           </div>
         </div>
 
         {/* Chat box — scales in from center */}
         <div
-          className="absolute inset-0 mx-auto w-4/5 h-full flex flex-col rounded-2xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm overflow-hidden"
+          className="absolute inset-0 mx-auto w-full sm:w-4/5 h-full flex flex-col rounded-2xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm overflow-hidden"
            style={{
           zIndex: 1,
           transform: chatOpen ? 'scale(1)' : 'scale(0.06)',
