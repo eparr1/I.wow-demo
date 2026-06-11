@@ -56,7 +56,8 @@ export const mockResponses = {
     "That tells you something real about what helps. When things feel stretched like this, is there anyone at work you feel you can lean on?",
     "Worth holding onto that — it gives you something to work with. Is there anyone at work you tend to turn to when things get heavy?",
     "You can see the difference when that changes. When it gets hard like this, who at work, if anyone, do you lean on?",
-  ],
+    "If sharing at work doesn't feel safe, that's completely valid. One option is anonymous feedback to HR or management, but you don't have to take that on. What would help you protect your energy here?",    "Some people find it helpful to keep a separate support space while they figure out what feels safe at work. In the meantime, what small thing could help you protect your energy?",
+    "If it feels too much to try to change the environment, that's okay. What could help you have a little more energy or calm this week?",  ],
 
   exceptions_high: [
     "That period is worth paying attention to. What was different on that easier day — the workload, the people around you, how you were working?",

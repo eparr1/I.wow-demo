@@ -149,9 +149,9 @@ const AI_STAGE_CONFIG: Partial<Record<Stage, StageConfig>> = {
   },
   strengths_amplify: {
     stagePurpose: 'Reinforce what is working and help them commit to more of it',
-    focusOn: 'The specific strength, habit, or approach they just named',
+    focusOn: 'The specific strength, habit, or approach they just named — could be work-based or personal',
     tone: 'Affirming and forward-looking. Not coaching — just curious about their intent.',
-    scaffolding: 'for example, feeling supported, having a laugh together, working well as a team, being trusted to get on with things, the variety in the role, or something else',
+    scaffolding: 'for example, good relationships, clear boundaries, routines that help, time to recharge, being supported, or something else',
     examples: [
       {
         userSaid: "Taking proper lunch breaks and actually leaving on time.",
@@ -191,34 +191,35 @@ const AI_STAGE_CONFIG: Partial<Record<Stage, StageConfig>> = {
     ],
   },
   exceptions_mid: {
-    stagePurpose: 'Surface one concrete small thing that could shift the day',
-    focusOn: 'The specific change or factor they identify — keep it small and realistic',
-    tone: 'Practical, grounded. Not solving everything — just one small thing.',
-    scaffolding: 'for example, fewer meetings, space to focus, a clearer brief, a bit more support from someone, or one less pressure removed',
+    stagePurpose: 'Help them clearly see the ONE factor that made that moment different — so they can understand what actually shifts for them',
+    focusOn: 'The specific factor they name as making that day lighter — not what they could do about it, but what was actually different',
+    tone: 'Curious and grounded. Not jumping to solutions yet — just helping them understand what mattered.',
+    scaffolding: 'for example, fewer interruptions, more time in flow, less on their plate that day, someone checking in, a calmer pace, or something else',
     examples: [
       {
         userSaid: "When I had fewer meetings and could actually get into my work.",
         shouldRespond:
-          "Having space to actually focus — that made the difference. What would help you get even one day like that this week?",
+          "So having unbroken time to focus — that's what made the shift. Is that the one thing that made a real difference on those days?",
       },
     ],
   },
   small_shifts: {
-    stagePurpose: 'Close by affirming the insight or small plan they arrived at',
-    focusOn: 'What they specifically identified as a shift — name the actual thing',
-    tone: 'Grounded and affirming. One short statement. No questions.',
+    stagePurpose: 'Help them commit to trying that one factor this week — move from understanding to action',
+    focusOn: 'The specific factor they named as making a difference — reflect it back and help them commit to creating more of it',
+    tone: 'Warm and encouraging. Not pushy — just a gentle invitation to try one small thing.',
     examples: [
       {
-        userSaid: "Maybe just blocking out one morning a week without meetings.",
+        userSaid: "Focus time is what makes the difference. If I could get even one morning without meetings, I know things would feel different.",
         shouldRespond:
-          "One protected morning. That's specific and doable — and it could change the feel of the whole week.",
+          "One protected morning where you can actually focus — that's specific and within reach. What would it look like to try that this week?",
       },
     ],
   },
   explore_high: {
     stagePurpose: 'Understand what has been making this stretch so heavy — join them before exploring solutions',
-    focusOn: 'ONE specific thing they named — a pressure, a dynamic, a feeling of overwhelm',
+    focusOn: 'ONE specific thing they named — a pressure, a dynamic, a feeling of overwhelm. Do not shift toward what helps yet.',
     tone: 'Warm and unhurried. This is a joining stage — sit with them before moving anywhere.',
+    scaffolding: 'for example, the colleagues pressure, the client work drain, the way the day feels, or something else. Do not ask about what helps, breaks, or support yet.',
     examples: [
       {
         userSaid: "It's the workload honestly. There's just no end to it.",
@@ -246,11 +247,16 @@ const AI_STAGE_CONFIG: Partial<Record<Stage, StageConfig>> = {
     ],
   },
   support_check: {
-    stagePurpose: 'Acknowledge what they identified as making the difference, then pivot naturally to their support network',
-    focusOn: 'What they named as the factor — validate it, then ask who they lean on when things feel stretched',
+    stagePurpose: 'Acknowledge what they identified as making the difference, then explore support options without making it their responsibility',
+    focusOn: 'What they named as the factor — validate it, then ask about support, safe options, or optional anonymous reporting. Do not imply they must change the culture themselves.',
     tone: 'Warm and curious. Not clinical. A natural question that follows from what they just shared.',
-    scaffolding: 'for example, a manager they trust, a close colleague, a mentor, someone in HR, or someone outside their immediate team',
+    scaffolding: 'for example, a manager they trust, a close colleague, a mentor, someone in HR, someone outside their immediate team, or anonymous feedback to management/HR',
     examples: [
+      {
+        userSaid: "I wouldn't feel comfortable sharing this at work.",
+        shouldRespond:
+          "That makes sense — it can feel too risky to share internally. If you wanted, anonymous feedback to HR or management is one option, but you don't have to take that on. What might help you protect your energy right now?",
+      },
       {
         userSaid: "I think when my manager was less involved, the pressure lifted.",
         shouldRespond:
@@ -260,6 +266,11 @@ const AI_STAGE_CONFIG: Partial<Record<Stage, StageConfig>> = {
         userSaid: "Honestly I'm not sure what was different. Maybe just a lighter week.",
         shouldRespond:
           "Even a lighter week is something — your system needed that break. When it gets heavy like this, is there anyone at work you tend to turn to?",
+      },
+      {
+        userSaid: "I wouldn't feel comfortable sharing this at work.",
+        shouldRespond:
+          "That makes sense — it can feel too risky to share internally. If you wanted, anonymous feedback to HR or management is one option, but you don't have to take that on. What might help you protect your energy right now?",
       },
     ],
   },
@@ -324,6 +335,15 @@ function buildMessages(
     ? `\nScaffolding: when you ask your question, add a brief "For example..." clause after it using these suggestions: ${config.scaffolding}. Keep it to 3–4 options and end with "or something else." This helps ground the question without narrowing it.\n`
     : '';
 
+  const stageSpecificAvoid =
+    stage === 'explore_high'
+      ? '\nImportant: this stage is only about what is making the stretch heavy right now. Do not ask about what helps, how they cope, breaks, or support yet.\n'
+      : stage === 'exceptions_high'
+      ? '\nImportant: this stage is about what was different on the easier day. Do not ask about strategies, support, or resource ideas yet.\n'
+      : stage === 'support_check'
+      ? '\nImportant: do not suggest the person has to fix a toxic culture or create listening opportunities themselves. If they say they don\'t feel safe sharing at work, acknowledge that and offer anonymous feedback or self-protection as optional choices. Then ask what they can do to protect their energy right now.\n'
+      : '';
+
   const isClosing = CLOSING_STAGES.includes(stage);
   const isTransition = TRANSITION_STAGES.includes(stage);
 
@@ -338,7 +358,7 @@ function buildMessages(
     : '';
 
   const systemFull = `${SYSTEM_PROMPT}
-${safetyNote}${transitionNote}${scaffoldingNote}
+${safetyNote}${stageSpecificAvoid}${transitionNote}${scaffoldingNote}
 ${instruction}`;
 
   const historyMessages: OpenAIMessage[] = history.map((m) => ({
